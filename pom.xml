@@ -7,6 +7,7 @@
         <module>base-service-api-gateway-webapp</module>
         <module>base-service-api-gateway-model</module>
         <module>base-service-api-gateway-biz</module>
+        <module>base-service-api-gateway-core</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
