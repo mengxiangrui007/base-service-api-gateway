@@ -1,3 +1,6 @@
+eureka:
+  defaultZone: http://127.0.0.1:8761/eureka/
+
 db:
   host: 10.26.15.199
   port: 3306

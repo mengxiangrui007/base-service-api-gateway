@@ -22,6 +22,10 @@ spring:
       discovery:
         locator:
           enabled: true
+eureka:
+  client:
+    service-url:
+      defaultZone: ${eureka.defaultZone}
 
 mybatis:
   type-aliases-package: com.risen.base.api.gateway.mapper
