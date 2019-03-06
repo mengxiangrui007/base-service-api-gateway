@@ -1,11 +1,13 @@
 spring:
   application:
     name: base-service-api-gateway-server
+  profiles:
+    active: dev
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://10.26.21.27:3306/risen?zeroDateTimeBehavior=convertToNull&useUnicode=yes&characterEncoding=UTF8
-    username: root
-    password: 3ae560c8e28f6faf
+    url: jdbc:mysql://${db.host}:${db.port}/${db.database}?zeroDateTimeBehavior=convertToNull&useUnicode=yes&characterEncoding=UTF8
+    username: ${db.username}
+    password: ${db.password}
     hikari:
       minimum-idle: 5
       maximum-pool-size: 15
@@ -15,7 +17,15 @@ spring:
       max-lifetime: 900000
       connection-timeout: 15000
       connection-test-query: SELECT 1
-
+  cloud:
+    gateway:
+      routes:
+        - id: add_request_header_route
+          uri: http://example.org
+          filters:
+            - AddRequestHeader=X-Request-Foo, Bar
+          predicates:
+            - RemoteAddr=192.168.1.1/24
 mybatis:
   type-aliases-package: com.risen.base.api.gateway.mapper
   mapper-locations: classpath*:/mapper/*.xml
