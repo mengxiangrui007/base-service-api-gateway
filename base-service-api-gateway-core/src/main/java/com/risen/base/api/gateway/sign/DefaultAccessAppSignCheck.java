@@ -2,8 +2,8 @@ package com.risen.base.api.gateway.sign;
 
 import com.risen.base.api.gateway.config.ApiGatewayAppProperties;
 import com.risen.base.api.gateway.enums.AppStatus;
-import com.risen.base.api.gateway.server.AppServer;
-import com.risen.base.api.gateway.server.AppServerCache;
+import com.risen.base.api.gateway.cache.AppServer;
+import com.risen.base.api.gateway.cache.AppServerCache;
 import com.risen.base.api.gateway.util.ApiGatewaySignUtils;
 import com.risen.base.api.gateway.util.MapUtils;
 import com.risen.base.api.gateway.util.ServerHttpRequestUtils;

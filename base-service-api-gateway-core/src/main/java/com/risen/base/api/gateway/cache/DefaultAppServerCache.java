@@ -1,4 +1,4 @@
-package com.risen.base.api.gateway.server;
+package com.risen.base.api.gateway.cache;
 
 import com.google.common.cache.*;
 import com.risen.base.api.gateway.config.ApiGatewayServerProperties;

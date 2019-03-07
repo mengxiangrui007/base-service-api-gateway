@@ -3,11 +3,10 @@ package com.risen.base.api.gateway.config;
 import com.risen.base.api.gateway.filter.AppkeySecretFilter;
 import com.risen.base.api.gateway.mapper.GwAppInfoMapper;
 import com.risen.base.api.gateway.mapper.GwAppServerMapper;
-import com.risen.base.api.gateway.server.AppServerCache;
-import com.risen.base.api.gateway.server.DefaultAppServerCache;
+import com.risen.base.api.gateway.cache.AppServerCache;
+import com.risen.base.api.gateway.cache.DefaultAppServerCache;
 import com.risen.base.api.gateway.sign.AccessAppSignCheck;
 import com.risen.base.api.gateway.sign.DefaultAccessAppSignCheck;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -25,28 +24,31 @@ import org.springframework.web.reactive.DispatcherHandler;
 @ConditionalOnProperty(name = "spring.cloud.gateway.enabled", matchIfMissing = true)
 @Configuration
 @ConditionalOnClass(DispatcherHandler.class)
-@EnableConfigurationProperties({ApiGatewayAppProperties.class, ApiGatewayServerProperties.class})
 public class ApiGatewayAutoConfiguration {
-    @Bean
-    @ConditionalOnMissingBean
+
     @ConditionalOnProperty(name = "spring.cloud.gateway.app.skip", havingValue = "false", matchIfMissing = true)
-    public AppkeySecretFilter appkeySecretFilter(AccessAppSignCheck accessAppSignCheck) {
-        return new AppkeySecretFilter(accessAppSignCheck);
+    @Configuration
+    @EnableConfigurationProperties({ApiGatewayAppProperties.class, ApiGatewayServerProperties.class})
+    public static class ApiGatewayAppkeySecretAutoConfiguration {
+        @Bean
+        @ConditionalOnMissingBean
+        public AppkeySecretFilter appkeySecretFilter(AccessAppSignCheck accessAppSignCheck) {
+            return new AppkeySecretFilter(accessAppSignCheck);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        public AccessAppSignCheck accessAppSignCheck(ApiGatewayAppProperties apiGatewayAppProperties, AppServerCache appServerCache) {
+            return new DefaultAccessAppSignCheck(apiGatewayAppProperties, appServerCache);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        public AppServerCache appServerCache(ApiGatewayServerProperties apiGatewayServerProperties, GwAppInfoMapper gwAppInfoMapper
+                , GwAppServerMapper gwAppServerMapper) {
+            return new DefaultAppServerCache(apiGatewayServerProperties, gwAppInfoMapper, gwAppServerMapper);
+        }
     }
 
-    @Bean
-    @ConditionalOnBean(AppkeySecretFilter.class)
-    @ConditionalOnMissingBean
-    public AccessAppSignCheck accessAppSignCheck(ApiGatewayAppProperties apiGatewayAppProperties, AppServerCache appServerCache) {
-        return new DefaultAccessAppSignCheck(apiGatewayAppProperties, appServerCache);
-    }
-
-    @Bean
-    @ConditionalOnBean(AppkeySecretFilter.class)
-    @ConditionalOnMissingBean
-    public AppServerCache appServerCache(ApiGatewayServerProperties apiGatewayServerProperties, GwAppInfoMapper gwAppInfoMapper
-            , GwAppServerMapper gwAppServerMapper) {
-        return new DefaultAppServerCache(apiGatewayServerProperties, gwAppInfoMapper, gwAppServerMapper);
-    }
 
 }

@@ -1,4 +1,4 @@
-package com.risen.base.api.gateway.server;
+package com.risen.base.api.gateway.cache;
 
 /**
  * app server cache
