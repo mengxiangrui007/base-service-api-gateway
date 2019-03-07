@@ -22,6 +22,8 @@ spring:
       discovery:
         locator:
           enabled: true
+      app:
+        skip: false
 eureka:
   client:
     service-url:
