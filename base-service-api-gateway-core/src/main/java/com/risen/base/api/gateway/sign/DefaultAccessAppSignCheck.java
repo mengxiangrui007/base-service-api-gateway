@@ -1,6 +1,7 @@
 package com.risen.base.api.gateway.sign;
 
 import com.risen.base.api.gateway.config.ApiGatewayAppProperties;
+import com.risen.base.api.gateway.enums.AppStatus;
 import com.risen.base.api.gateway.server.AppServer;
 import com.risen.base.api.gateway.server.AppServerCache;
 import com.risen.base.api.gateway.util.ApiGatewaySignUtils;
@@ -78,6 +79,13 @@ public class DefaultAccessAppSignCheck implements AccessAppSignCheck {
         if (appServer == null) {
             log.warn("未识别的AppID[{}]", appId);
             throw new InvalidAccessTokenException("未识别的AppID [" + appId + "]");
+        }
+        Byte status = appServer.getStatus();
+        switch (AppStatus.of(status)) {
+            case OFF:
+                throw new InvalidAccessTokenException("当前AppID已下线");
+            default:
+                break;
         }
         Map<String, String> regularMap = MapUtils.convertMultiToRegularMap(queryParams);
         regularMap.put(apiGatewayAppProperties.getAppId(), appId);

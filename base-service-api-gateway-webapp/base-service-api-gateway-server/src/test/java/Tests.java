@@ -17,7 +17,7 @@ public class Tests {
         OkHttpClient okHttpClient = new OkHttpClient();
         String appId = "1234567890";
         String timeStamp = String.valueOf(System.currentTimeMillis());
-        String appsecret = "111111131";
+        String appsecret = "11111111";
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("X-GW-APPID", appId);
         queryParams.put("X-GW-Timestamp", timeStamp);
