@@ -2,6 +2,9 @@ package com.risen.base.api.gateway.mapper;
 
 import com.risen.base.api.gateway.model.GwAppServer;
 
+import java.util.Set;
+
+@Mybatis
 public interface GwAppServerMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -14,4 +17,6 @@ public interface GwAppServerMapper {
     int updateByPrimaryKeySelective(GwAppServer record);
 
     int updateByPrimaryKey(GwAppServer record);
+
+    Set<GwAppServer> selectListByAppkey(String appKey);
 }

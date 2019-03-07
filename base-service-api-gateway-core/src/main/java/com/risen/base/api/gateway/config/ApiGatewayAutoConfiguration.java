@@ -1,6 +1,10 @@
 package com.risen.base.api.gateway.config;
 
 import com.risen.base.api.gateway.filter.AppkeySecretFilter;
+import com.risen.base.api.gateway.mapper.GwAppInfoMapper;
+import com.risen.base.api.gateway.mapper.GwAppServerMapper;
+import com.risen.base.api.gateway.server.AppServerCache;
+import com.risen.base.api.gateway.server.DefaultAppServerCache;
 import com.risen.base.api.gateway.sign.AccessAppSignCheck;
 import com.risen.base.api.gateway.sign.DefaultAccessAppSignCheck;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -21,7 +25,7 @@ import org.springframework.web.reactive.DispatcherHandler;
 @ConditionalOnProperty(name = "spring.cloud.gateway.enabled", matchIfMissing = true)
 @Configuration
 @ConditionalOnClass(DispatcherHandler.class)
-@EnableConfigurationProperties({ApiGatewayAppProperties.class})
+@EnableConfigurationProperties({ApiGatewayAppProperties.class, ApiGatewayServerProperties.class})
 public class ApiGatewayAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
@@ -37,5 +41,11 @@ public class ApiGatewayAutoConfiguration {
         return new DefaultAccessAppSignCheck(apiGatewayAppProperties);
     }
 
+    @Bean
+    @ConditionalOnBean(AppkeySecretFilter.class)
+    @ConditionalOnMissingBean
+    public AppServerCache appServerCache(ApiGatewayServerProperties apiGatewayServerProperties, GwAppInfoMapper gwAppInfoMapper, GwAppServerMapper gwAppServerMapper) {
+        return new DefaultAppServerCache(apiGatewayServerProperties, gwAppInfoMapper, gwAppServerMapper);
+    }
 
 }
