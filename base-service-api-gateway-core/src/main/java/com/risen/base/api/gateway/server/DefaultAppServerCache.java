@@ -30,7 +30,7 @@ public class DefaultAppServerCache implements AppServerCache {
 
     private final ConcurrentMap<String, AppServer> readOnlyCacheMap = new ConcurrentHashMap<String, AppServer>();
 
-    private final LoadingCache<String, AppServer> readWriteCacheMap;
+    private final LoadingCache<String, Value> readWriteCacheMap;
 
     private final long serverCacheUpdateIntervalMs;
 
@@ -54,18 +54,18 @@ public class DefaultAppServerCache implements AppServerCache {
         this.readWriteCacheMap =
                 CacheBuilder.newBuilder().initialCapacity(apiGatewayServerProperties.getInitialCapacityOfServerCache())
                         .expireAfterWrite(apiGatewayServerProperties.getServerCacheAutoExpirationInSeconds(), TimeUnit.SECONDS)
-                        .removalListener(new RemovalListener<String, AppServer>() {
+                        .removalListener(new RemovalListener<String, Value>() {
                             @Override
-                            public void onRemoval(RemovalNotification<String, AppServer> notification) {
+                            public void onRemoval(RemovalNotification<String, Value> notification) {
                                 //此处不删除readOnlyCacheMap缓存当心跳时删除
                                 String removedKey = notification.getKey();
                             }
                         })
-                        .build(new CacheLoader<String, AppServer>() {
+                        .build(new CacheLoader<String, Value>() {
                             @Override
-                            public AppServer load(String key) throws Exception {
+                            public Value load(String key) throws Exception {
                                 AppServer value = generatePayload(key);
-                                return value;
+                                return new Value(value);
                             }
                         });
 
@@ -103,11 +103,12 @@ public class DefaultAppServerCache implements AppServerCache {
             log.debug("Updating the client cache from server cache");
             for (String key : readOnlyCacheMap.keySet()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Updating the client cache from server cache for key : {} ",
+                    log.debug("Updating the client cache from server cache for appid : {} ",
                             key);
                 }
                 try {
-                    AppServer cacheValue = readWriteCacheMap.get(key);
+                    Value value = readWriteCacheMap.get(key);
+                    AppServer cacheValue = value.getAppServer();
                     AppServer currentCacheValue = readOnlyCacheMap.get(key);
                     if (cacheValue != currentCacheValue) {
                         readOnlyCacheMap.put(key, cacheValue);
@@ -128,30 +129,22 @@ public class DefaultAppServerCache implements AppServerCache {
     @Override
     public AppServer get(String appId) {
         AppServer payload = null;
+        Value value = null;
         try {
             if (shouldUseReadOnlyServerCache) {
                 final AppServer currentPayload = readOnlyCacheMap.get(appId);
                 if (currentPayload != null) {
                     payload = currentPayload;
                 } else {
-                    payload = readWriteCacheMap.get(appId);
+                    value = readWriteCacheMap.get(appId);
+                    payload = value.getAppServer();
                     if (payload != null) {
                         readOnlyCacheMap.put(appId, payload);
-                    } else {
-                        payload = generatePayload(appId);
-                        if (payload != null) {
-                            readWriteCacheMap.put(appId, payload);
-                        }
                     }
                 }
             } else {
-                payload = readWriteCacheMap.get(appId);
-                if (payload == null) {
-                    payload = generatePayload(appId);
-                    if (payload != null) {
-                        readWriteCacheMap.put(appId, payload);
-                    }
-                }
+                value = readWriteCacheMap.get(appId);
+                payload = value.getAppServer();
             }
         } catch (Throwable t) {
             log.error("Cannot get value for key : {}", appId, t);
@@ -159,4 +152,35 @@ public class DefaultAppServerCache implements AppServerCache {
         return payload;
     }
 
+    /**
+     * The class that stores payload in both compressed and uncompressed form.
+     */
+    public class Value {
+        private AppServer appServer;
+
+        public Value(AppServer appServer) {
+            this.appServer = appServer;
+        }
+
+        public AppServer getAppServer() {
+            return appServer;
+        }
+
+        public void setAppServer(AppServer appServer) {
+            this.appServer = appServer;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Value value = (Value) o;
+            return Objects.equals(appServer, value.appServer);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(appServer);
+        }
+    }
 }

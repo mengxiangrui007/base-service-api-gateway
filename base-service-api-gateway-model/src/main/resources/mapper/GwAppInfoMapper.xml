@@ -13,7 +13,7 @@
         <result column="mtime" jdbcType="TIMESTAMP" property="mtime"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, name, desc, type, appKey, appSecret, status, ctime, mtime
+    id, name, `desc`, type, appKey, appSecret, status, ctime, mtime
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select

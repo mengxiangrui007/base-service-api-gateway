@@ -37,8 +37,8 @@ public class ApiGatewayAutoConfiguration {
     @Bean
     @ConditionalOnBean(AppkeySecretFilter.class)
     @ConditionalOnMissingBean
-    public AccessAppSignCheck accessAppSignCheck(ApiGatewayAppProperties apiGatewayAppProperties) {
-        return new DefaultAccessAppSignCheck(apiGatewayAppProperties);
+    public AccessAppSignCheck accessAppSignCheck(ApiGatewayAppProperties apiGatewayAppProperties, AppServerCache appServerCache) {
+        return new DefaultAccessAppSignCheck(apiGatewayAppProperties, appServerCache);
     }
 
     @Bean

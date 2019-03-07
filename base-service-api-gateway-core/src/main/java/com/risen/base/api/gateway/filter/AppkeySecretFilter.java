@@ -28,6 +28,7 @@ public class AppkeySecretFilter implements GlobalFilter, Ordered {
         this.accessAppSignCheck = accessAppSignCheck;
     }
 
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
@@ -44,6 +45,6 @@ public class AppkeySecretFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return 0;
+        return 1;
     }
 }
