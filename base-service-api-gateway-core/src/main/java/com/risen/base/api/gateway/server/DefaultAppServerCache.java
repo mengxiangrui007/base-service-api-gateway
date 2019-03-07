@@ -146,8 +146,11 @@ public class DefaultAppServerCache implements AppServerCache {
                 }
             } else {
                 payload = readWriteCacheMap.get(appId);
-                if (payload != null) {
-                    readWriteCacheMap.put(appId, payload);
+                if (payload == null) {
+                    payload = generatePayload(appId);
+                    if (payload != null) {
+                        readWriteCacheMap.put(appId, payload);
+                    }
                 }
             }
         } catch (Throwable t) {

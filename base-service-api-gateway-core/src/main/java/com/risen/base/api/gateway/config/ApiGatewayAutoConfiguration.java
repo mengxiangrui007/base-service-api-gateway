@@ -44,7 +44,8 @@ public class ApiGatewayAutoConfiguration {
     @Bean
     @ConditionalOnBean(AppkeySecretFilter.class)
     @ConditionalOnMissingBean
-    public AppServerCache appServerCache(ApiGatewayServerProperties apiGatewayServerProperties, GwAppInfoMapper gwAppInfoMapper, GwAppServerMapper gwAppServerMapper) {
+    public AppServerCache appServerCache(ApiGatewayServerProperties apiGatewayServerProperties, GwAppInfoMapper gwAppInfoMapper
+            , GwAppServerMapper gwAppServerMapper) {
         return new DefaultAppServerCache(apiGatewayServerProperties, gwAppInfoMapper, gwAppServerMapper);
     }
 
