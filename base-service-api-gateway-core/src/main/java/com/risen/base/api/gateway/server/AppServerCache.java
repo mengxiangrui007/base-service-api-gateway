@@ -1,7 +1,7 @@
 package com.risen.base.api.gateway.server;
 
 /**
- * app
+ * app server cache
  *
  * @author mengxr
  * @since 1.0

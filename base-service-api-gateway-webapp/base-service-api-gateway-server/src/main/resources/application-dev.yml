@@ -7,3 +7,7 @@ db:
   username: root
   password: 3ae560c8e28f6faf
   database: risen
+
+logging:
+  level:
+    com.risen: debug

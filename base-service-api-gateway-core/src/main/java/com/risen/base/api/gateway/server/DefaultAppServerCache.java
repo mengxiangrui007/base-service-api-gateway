@@ -32,7 +32,6 @@ public class DefaultAppServerCache implements AppServerCache {
 
     private final LoadingCache<String, AppServer> readWriteCacheMap;
 
-
     private final long serverCacheUpdateIntervalMs;
 
     private final boolean shouldUseReadOnlyServerCache;
