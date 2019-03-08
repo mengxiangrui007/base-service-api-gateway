@@ -26,7 +26,12 @@
         </dependency>
         <dependency>
             <groupId>com.risen.base</groupId>
-            <artifactId>base-service-api-gateway-model</artifactId>
+            <artifactId>base-service-api-gateway-storage-db</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.risen.base</groupId>
+            <artifactId>base-service-api-gateway-util</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

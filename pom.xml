@@ -5,8 +5,9 @@
     <packaging>pom</packaging>
     <modules>
         <module>base-service-api-gateway-webapp</module>
-        <module>base-service-api-gateway-model</module>
         <module>base-service-api-gateway-core</module>
+        <module>base-service-api-gateway-util</module>
+        <module>base-service-api-gateway-storage</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

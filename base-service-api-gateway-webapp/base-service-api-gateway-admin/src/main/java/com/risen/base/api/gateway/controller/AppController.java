@@ -16,4 +16,5 @@ public class AppController {
     public String list() {
         return "app/list";
     }
+
 }

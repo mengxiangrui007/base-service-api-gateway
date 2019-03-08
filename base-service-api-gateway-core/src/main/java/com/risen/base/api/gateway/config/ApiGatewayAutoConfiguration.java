@@ -1,12 +1,11 @@
 package com.risen.base.api.gateway.config;
 
 import com.risen.base.api.gateway.cache.AppServerCache;
+import com.risen.base.api.gateway.cache.AppServerStorage;
 import com.risen.base.api.gateway.cache.DefaultAppServerCache;
 import com.risen.base.api.gateway.filter.AppLoadBalancerClientFilter;
 import com.risen.base.api.gateway.filter.AppServerFilter;
 import com.risen.base.api.gateway.filter.AppkeySecretFilter;
-import com.risen.base.api.gateway.mapper.GwAppInfoMapper;
-import com.risen.base.api.gateway.mapper.GwAppServerMapper;
 import com.risen.base.api.gateway.server.AppServerCheck;
 import com.risen.base.api.gateway.server.DefaultAppServerCheck;
 import com.risen.base.api.gateway.sign.AccessAppSignCheck;
@@ -38,9 +37,8 @@ public class ApiGatewayAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public AppServerCache appServerCache(ApiGatewayServerProperties apiGatewayServerProperties, GwAppInfoMapper gwAppInfoMapper
-            , GwAppServerMapper gwAppServerMapper) {
-        return new DefaultAppServerCache(apiGatewayServerProperties, gwAppInfoMapper, gwAppServerMapper);
+    public AppServerCache appServerCache(ApiGatewayServerProperties apiGatewayServerProperties, AppServerStorage appServerStorage) {
+        return new DefaultAppServerCache(apiGatewayServerProperties, appServerStorage);
     }
 
 

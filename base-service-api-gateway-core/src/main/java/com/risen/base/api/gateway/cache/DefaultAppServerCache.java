@@ -2,18 +2,11 @@ package com.risen.base.api.gateway.cache;
 
 import com.google.common.cache.*;
 import com.risen.base.api.gateway.config.ApiGatewayServerProperties;
-import com.risen.base.api.gateway.mapper.GwAppInfoMapper;
-import com.risen.base.api.gateway.mapper.GwAppServerMapper;
-import com.risen.base.api.gateway.model.GwAppInfo;
-import com.risen.base.api.gateway.model.GwAppServer;
-import com.risen.base.api.gateway.util.BeanCopierUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.*;
 
 /**
@@ -36,17 +29,13 @@ public class DefaultAppServerCache implements AppServerCache {
 
     private final boolean shouldUseReadOnlyServerCache;
 
-    private GwAppInfoMapper gwAppInfoMapper;
-
-    private GwAppServerMapper gwAppServerMapper;
+    private AppServerStorage appServerStorage;
 
     private ScheduledExecutorService appServerExecutorService = new ScheduledThreadPoolExecutor(1,
             new BasicThreadFactory.Builder().namingPattern("APP-Server-schedule-pool-%d").daemon(true).build());
 
-    public DefaultAppServerCache(ApiGatewayServerProperties apiGatewayServerProperties, GwAppInfoMapper gwAppInfoMapper
-            , GwAppServerMapper gwAppServerMapper) {
-        this.gwAppInfoMapper = gwAppInfoMapper;
-        this.gwAppServerMapper = gwAppServerMapper;
+    public DefaultAppServerCache(ApiGatewayServerProperties apiGatewayServerProperties, AppServerStorage appServerStorage) {
+        this.appServerStorage = appServerStorage;
         this.apiGatewayServerProperties = apiGatewayServerProperties;
         this.shouldUseReadOnlyServerCache = apiGatewayServerProperties.getShouldUseReadOnlyServerCache();
         this.serverCacheUpdateIntervalMs = apiGatewayServerProperties.getServerCacheUpdateIntervalMs();
@@ -64,7 +53,7 @@ public class DefaultAppServerCache implements AppServerCache {
                         .build(new CacheLoader<String, Value>() {
                             @Override
                             public Value load(String key) throws Exception {
-                                AppServer value = generatePayload(key);
+                                AppServer value = appServerStorage.generateAppServer(key);
                                 return new Value(value);
                             }
                         });
@@ -76,22 +65,6 @@ public class DefaultAppServerCache implements AppServerCache {
 
     }
 
-    /*
-     * Generate pay load for the given key.
-     */
-    private AppServer generatePayload(String key) {
-        GwAppInfo gwAppInfo = gwAppInfoMapper.selectByAppkey(key);
-        if (Objects.nonNull(gwAppInfo)) {
-            AppServer appServer = BeanCopierUtils.copierTargetBean(gwAppInfo, GwAppInfo.class, AppServer.class);
-            Set<GwAppServer> gwAppServers = gwAppServerMapper.selectListByAppkey(key);
-            if (!CollectionUtils.isEmpty(gwAppServers)) {
-                Set<AppServer.Server> servers = BeanCopierUtils.copierTargetBeanSet(gwAppServers, GwAppServer.class, AppServer.Server.class);
-                appServer.setServers(servers);
-            }
-            return appServer;
-        }
-        return null;
-    }
 
     /**
      * 更新缓存
