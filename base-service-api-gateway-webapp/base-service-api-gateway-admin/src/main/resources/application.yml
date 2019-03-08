@@ -17,6 +17,8 @@ spring:
       max-lifetime: 900000
       connection-timeout: 15000
       connection-test-query: SELECT 1
+  thymeleaf:
+    cache: false
 
 server:
   port: 8085
