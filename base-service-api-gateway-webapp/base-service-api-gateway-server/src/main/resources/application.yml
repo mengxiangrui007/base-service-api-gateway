@@ -24,6 +24,18 @@ spring:
           enabled: true
       app:
         skip: false
+      server:
+        skip: false
+
+
+#      routes:
+#        - id: middle-service-user-server
+#          uri: lb://middle-service-user-server
+#          predicates:
+#            - Path=/user/**
+#          filters:
+#            - StripPrefix=1
+
 eureka:
   client:
     service-url:

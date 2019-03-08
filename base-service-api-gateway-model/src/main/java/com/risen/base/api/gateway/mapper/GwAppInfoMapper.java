@@ -1,8 +1,6 @@
 package com.risen.base.api.gateway.mapper;
 
 import com.risen.base.api.gateway.model.GwAppInfo;
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Component;
 
 import java.util.Set;
 @Mybatis

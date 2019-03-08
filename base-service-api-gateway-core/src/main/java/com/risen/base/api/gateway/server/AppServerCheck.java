@@ -1,6 +1,6 @@
 package com.risen.base.api.gateway.server;
 
-import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.web.server.ServerWebExchange;
 
 /**
  * 校验当前应用下的服务授权
@@ -12,7 +12,7 @@ public interface AppServerCheck {
     /**
      * check server
      *
-     * @param request
+     * @param exchange
      */
-    void validAccessServer(ServerHttpRequest request) throws InvalidAccessServerException;
+    void validAccessServer(ServerWebExchange exchange) throws InvalidAccessServerException;
 }

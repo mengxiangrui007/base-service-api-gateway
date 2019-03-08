@@ -3,17 +3,20 @@ package com.risen.base.api.gateway.server;
 import com.risen.base.api.gateway.cache.AppServer;
 import com.risen.base.api.gateway.cache.AppServerCache;
 import com.risen.base.api.gateway.config.ApiGatewayAppProperties;
+import com.risen.base.api.gateway.util.GatewayServerWebExchangeUtils;
 import com.risen.base.api.gateway.util.ServerHttpRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.gateway.route.Route;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ServerWebExchange;
 
+import java.util.List;
 import java.util.Set;
-
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR;
+import java.util.stream.Collectors;
 
 /**
  * Default impl {@link AppServerCache}
@@ -29,7 +32,8 @@ public class DefaultAppServerCheck implements AppServerCheck {
 
     private AppServerCache appServerCache;
 
-    public DefaultAppServerCheck(ApiGatewayAppProperties apiGatewayAppProperties, AppServerCache appServerCache) {
+    public DefaultAppServerCheck(ApiGatewayAppProperties apiGatewayAppProperties
+            , AppServerCache appServerCache) {
         this.apiGatewayAppProperties = apiGatewayAppProperties;
         this.appServerCache = appServerCache;
     }
@@ -37,10 +41,11 @@ public class DefaultAppServerCheck implements AppServerCheck {
     /**
      * check server
      *
-     * @param request
+     * @param exchange
      */
     @Override
-    public void validAccessServer(ServerHttpRequest request) throws InvalidAccessServerException {
+    public void validAccessServer(ServerWebExchange exchange) throws InvalidAccessServerException {
+        ServerHttpRequest request = exchange.getRequest();
         String appId = ServerHttpRequestUtils.getHttpHeaderParam(request, apiGatewayAppProperties.getAppId());
         if (StringUtils.isEmpty(appId)) {
             log.warn("appId not null");
@@ -55,6 +60,19 @@ public class DefaultAppServerCheck implements AppServerCheck {
         if (CollectionUtils.isEmpty(servers)) {
             log.warn("当前AppID[{}]未配置授权服务列表", appId);
             throw new InvalidAccessServerException("当前AppID[" + appId + "]未配置授权服务列表");
+        } else {
+            Object instance = exchange.getAttributes().get(GatewayServerWebExchangeUtils.GATEWAY_REQUEST_SERVICE_INSTANCE);
+            if (instance == null) {
+                String msg = "Unable to find instance for " + appId;
+                throw new NotFoundException(msg);
+            }
+            List<String> serverCodes = servers.stream().map(AppServer.Server::getServerCode).collect(Collectors.toList());
+            ServiceInstance serviceInstance = (ServiceInstance) instance;
+            String serviceId = serviceInstance.getServiceId();
+            if (!serverCodes.contains(serviceId)) {
+                log.warn("当前AppID[{}]未授权[{}]服务", appId, serviceId);
+                throw new InvalidAccessServerException("当前AppID[" + appId + "]未授权[" + serviceId + "]服务");
+            }
         }
 
     }

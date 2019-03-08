@@ -24,6 +24,9 @@ public class AppkeySecretFilter implements GlobalFilter, Ordered {
 
     private AccessAppSignCheck accessAppSignCheck;
 
+    public static final int APP_KEY_SECRET_FILTER_ORDER = 0;
+
+
     public AppkeySecretFilter(AccessAppSignCheck accessAppSignCheck) {
         this.accessAppSignCheck = accessAppSignCheck;
     }
@@ -36,7 +39,7 @@ public class AppkeySecretFilter implements GlobalFilter, Ordered {
         try {
             accessAppSignCheck.validAccessAppSign(request);
         } catch (InvalidAccessTokenException e) {
-            log.warn("innvalid access token warn", e);
+            log.warn("invalid access token warn", e);
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return response.setComplete();
         }
@@ -45,6 +48,6 @@ public class AppkeySecretFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return 0;
+        return APP_KEY_SECRET_FILTER_ORDER;
     }
 }

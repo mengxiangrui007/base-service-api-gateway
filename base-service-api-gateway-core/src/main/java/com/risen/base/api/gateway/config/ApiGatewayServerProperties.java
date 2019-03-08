@@ -26,6 +26,11 @@ public class ApiGatewayServerProperties {
      */
     private Long serverCacheUpdateIntervalMs = 30 * 1000L;
 
+    /**
+     * skip 授权服务校验
+     */
+    private Boolean skip = Boolean.FALSE;
+
     public Long getServerCacheAutoExpirationInSeconds() {
         return serverCacheAutoExpirationInSeconds;
     }
@@ -60,5 +65,13 @@ public class ApiGatewayServerProperties {
 
     public void setServerCacheUpdateIntervalMs(Long serverCacheUpdateIntervalMs) {
         this.serverCacheUpdateIntervalMs = serverCacheUpdateIntervalMs;
+    }
+
+    public Boolean getSkip() {
+        return skip;
+    }
+
+    public void setSkip(Boolean skip) {
+        this.skip = skip;
     }
 }

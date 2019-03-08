@@ -27,5 +27,6 @@ CREATE TABLE `gw_app_server` (
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '服务状态 0不可用 1可用',
   `ctime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `mtime` timestamp NOT NULL DEFAULT '1970-01-02 00:00:00' ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='网关授权服务信息';
+  PRIMARY KEY (`id`),
+  KEY `idx_appKey` (`appKey`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='网关授权服务信息';
