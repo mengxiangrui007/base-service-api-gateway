@@ -31,12 +31,48 @@
         from gw_app_info
         where appKey = #{appKey,jdbcType=VARCHAR}
     </select>
-    <select id="selectCountWithBySearch" parameterType="com.risen.base.api.gateway.storage.db.model.GwAppInfo"
+    <select id="selectCountWithBySearch"
             resultType="java.lang.Integer">
-
+        select
+        count(id)
+        from gw_app_info
+        <where>
+            <if test="gwAppInfo.name != null">
+                and name = #{gwAppInfo.name,jdbcType=VARCHAR}
+            </if>
+            <if test="gwAppInfo.type != null">
+                and type = #{gwAppInfo.type,jdbcType=TINYINT}
+            </if>
+            <if test="gwAppInfo.appkey != null">
+                and appKey = #{gwAppInfo.appkey,jdbcType=VARCHAR},
+            </if>
+            <if test="gwAppInfo.status != null">
+                and status = #{gwAppInfo.status,jdbcType=BIT}
+            </if>
+        </where>
     </select>
-    <select id="selectListWithBySearch" parameterType="com.risen.base.api.gateway.storage.db.model.GwAppInfo"
-            resultMap="BaseResultMap"></select>
+    <select id="selectListWithBySearch"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from gw_app_info
+        <where>
+            <if test="gwAppInfo.name != null">
+                and name = #{gwAppInfo.name,jdbcType=VARCHAR}
+            </if>
+            <if test="gwAppInfo.type != null">
+                and type = #{gwAppInfo.type,jdbcType=TINYINT}
+            </if>
+            <if test="gwAppInfo.appkey != null">
+                and appKey = #{gwAppInfo.appkey,jdbcType=VARCHAR},
+            </if>
+            <if test="gwAppInfo.status != null">
+                and status = #{gwAppInfo.status,jdbcType=BIT}
+            </if>
+        </where>
+        ORDER BY mtime DESC
+        LIMIT #{start}, #{pageSize}
+    </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from gw_app_info

@@ -1,5 +1,7 @@
 package com.risen.base.api.gateway.service.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 /**
@@ -38,12 +40,10 @@ public class GwAppInfoEt {
      * 应用状态 0不可用 1可用
      */
     private Byte status;
-
     /**
      * 创建时间
      */
     private Date ctime;
-
     /**
      * 修改时间
      */

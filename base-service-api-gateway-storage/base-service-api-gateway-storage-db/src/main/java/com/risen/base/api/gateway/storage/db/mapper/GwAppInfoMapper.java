@@ -2,6 +2,7 @@ package com.risen.base.api.gateway.storage.db.mapper;
 
 
 import com.risen.base.api.gateway.storage.db.model.GwAppInfo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Set;
@@ -30,7 +31,7 @@ public interface GwAppInfoMapper {
      */
     GwAppInfo selectByAppkey(String appKey);
 
-    int selectCountWithBySearch(GwAppInfo gwAppInfo);
+    int selectCountWithBySearch(@Param("gwAppInfo") GwAppInfo gwAppInfo);
 
-    List<GwAppInfo> selectListWithBySearch(GwAppInfo gwAppInfo, int start, int pageSize);
+    List<GwAppInfo> selectListWithBySearch(@Param("gwAppInfo") GwAppInfo gwAppInfo, @Param("start") int start, @Param("pageSize") int pageSize);
 }

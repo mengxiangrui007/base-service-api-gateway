@@ -5,6 +5,7 @@ package com.risen.base.api.gateway.base;
  */
 public enum ErrorCode {
     Ok(0),
+    ParameterError(400),
     InternalError(500);
 
     private int value;
