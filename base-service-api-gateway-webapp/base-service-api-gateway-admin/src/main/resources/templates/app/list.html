@@ -34,8 +34,9 @@
 <div class="x-body">
     <div class="layui-row">
         <form class="layui-form layui-col-md12 x-so">
-            <input type="text" name="appkey" placeholder="请输入应用AppKey" autocomplete="off" class="layui-input">
-            <button class="layui-btn" lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+            <input type="text" id="appId" placeholder="请输入应用AppKey" autocomplete="off" class="layui-input">
+            <button id="searchBt1" class="layui-btn" lay-submit="applistId" lay-filter="sreach"><i class="layui-icon">&#xe615;</i>
+            </button>
         </form>
     </div>
     <xblock>
@@ -47,8 +48,7 @@
 </div>
 <script>
     layui.use('table', function () {
-        var table = layui.table;
-        table.render({
+        var option = {
             elem: '#applistId'
             , url: '/app/queryGwAppInfos'
             , page: true
@@ -96,8 +96,17 @@
                 };
             }
 
-        })
-        ;
+        };
+        var table = layui.table;
+
+         var tableObj = table.render(option);
+        //
+        // $('#searchBt1').on('click', function () {
+        //     var param = {};
+        //     param['appkey'] = $('#appId').val();
+        //     option.where = param;
+        //     tableObj.reload(option);
+        // });
     });
 
 
