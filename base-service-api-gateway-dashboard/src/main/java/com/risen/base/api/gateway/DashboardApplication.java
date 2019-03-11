@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(scanBasePackages = {"com.risen"})
 @MapperScan(value = "com.risen.base.api.gateway.storage.db.mapper")
-public class ApiAdminGatewayApplication {
+public class DashboardApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ApiAdminGatewayApplication.class, args);
+        SpringApplication.run(DashboardApplication.class, args);
     }
 
 }
