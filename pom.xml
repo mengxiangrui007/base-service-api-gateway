@@ -10,6 +10,7 @@
         <module>base-service-api-gateway-dashboard</module>
         <module>base-service-api-gateway-upload</module>
         <module>base-service-api-gateway-server</module>
+        <module>base-service-api-gateway-limit</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
