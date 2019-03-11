@@ -20,5 +20,4 @@ public interface IGwAppInfoService {
      * @return
      */
     Page<GwAppInfoEt> queryGwAppInfos(GwAppInfnDto gwAppInfnDto, int currentPage, int pageSize);
-
 }
