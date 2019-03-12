@@ -13,7 +13,6 @@ public class Tests {
 
     @Test
     public void contextLoads() throws IOException {
-        while (true){
             // 创建OKHttpClient对象
             OkHttpClient okHttpClient = new OkHttpClient();
             String appId = "1234567890";
@@ -40,6 +39,5 @@ public class Tests {
             // 将response转化成String
             String responseStr = response.body().string();
             System.out.println(responseStr);
-        }
     }
 }
