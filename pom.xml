@@ -31,6 +31,7 @@
         <mysql-jdbc.verion>5.1.47</mysql-jdbc.verion>
         <guava.version>23.0</guava.version>
         <okhttp.version>3.11.0</okhttp.version>
+        <sentinel-core.version>1.5.0-SNAPSHOT</sentinel-core.version>
     </properties>
 
 
@@ -54,6 +55,21 @@
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql-jdbc.verion}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.csp</groupId>
+                <artifactId>sentinel-spring-webflux-adapter</artifactId>
+                <version>${sentinel-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.csp</groupId>
+                <artifactId>sentinel-transport-simple-http</artifactId>
+                <version>${sentinel-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.csp</groupId>
+                <artifactId>sentinel-parameter-flow-control</artifactId>
+                <version>${sentinel-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

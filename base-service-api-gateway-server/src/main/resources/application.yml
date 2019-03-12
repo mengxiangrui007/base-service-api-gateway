@@ -19,14 +19,16 @@ spring:
       connection-test-query: SELECT 1
   cloud:
     gateway:
+      enabled: true
       discovery:
         locator:
           enabled: true
       app:
-        skip: false
+        skip: true
       server:
-        skip: false
-
+        skip: true
+      sentinel:
+        enabled: true
 
 #      routes:
 #        - id: middle-service-user-server

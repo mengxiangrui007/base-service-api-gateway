@@ -12,7 +12,7 @@
     <artifactId>base-service-api-gateway-limit</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>base-service-api-gateway-sentinel</module>
+        <module>base-service-api-gateway-limit-sentinel</module>
         <module>base-service-api-gateway-limit-hystrix</module>
     </modules>
 
