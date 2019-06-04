@@ -29,19 +29,20 @@ spring:
         skip: true
       sentinel:
         enabled: true
-
-#      routes:
-#        - id: middle-service-user-server
-#          uri: lb://middle-service-user-server
-#          predicates:
-#            - Path=/user/**
-#          filters:
-#            - StripPrefix=1
+      routes:
+        - id: middle-service-user-server
+          uri: lb://middle-service-user-server
+          predicates:
+            - Path=/user/**
+          filters:
+            - StripPrefix=1
 
 eureka:
   client:
     service-url:
       defaultZone: ${eureka.defaultZone}
+  instance:
+    prefer-ip-address: true
 
 mybatis:
   type-aliases-package: com.risen.base.api.gateway.storage.db.model
