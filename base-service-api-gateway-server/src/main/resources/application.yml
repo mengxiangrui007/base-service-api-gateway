@@ -36,6 +36,8 @@ spring:
             - Path=/user/**
           filters:
             - StripPrefix=1
+  main:
+    allow-bean-definition-overriding: true
 
 eureka:
   client:

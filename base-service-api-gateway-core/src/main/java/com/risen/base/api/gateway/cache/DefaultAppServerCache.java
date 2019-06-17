@@ -1,7 +1,10 @@
 package com.risen.base.api.gateway.cache;
 
-import com.google.common.cache.*;
-import com.risen.base.api.gateway.config.ApiGatewayServerProperties;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.RemovalListener;
+import com.risen.base.api.gateway.config.ApiGatewayCacheProperties;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +22,7 @@ public class DefaultAppServerCache implements AppServerCache {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultAppServerCache.class);
 
-    private ApiGatewayServerProperties apiGatewayServerProperties;
-
-    private final ConcurrentMap<String, AppServer> readOnlyCacheMap = new ConcurrentHashMap<String, AppServer>();
+    private final ConcurrentMap<String, AppServer> readOnlyCacheMap = new ConcurrentHashMap<>();
 
     private final LoadingCache<String, Value> readWriteCacheMap;
 
@@ -29,26 +30,24 @@ public class DefaultAppServerCache implements AppServerCache {
 
     private final boolean shouldUseReadOnlyServerCache;
 
+    private final boolean skip;
+
     private AppServerStorage appServerStorage;
 
     private ScheduledExecutorService appServerExecutorService = new ScheduledThreadPoolExecutor(1,
             new BasicThreadFactory.Builder().namingPattern("APP-Server-schedule-pool-%d").daemon(true).build());
 
-    public DefaultAppServerCache(ApiGatewayServerProperties apiGatewayServerProperties, AppServerStorage appServerStorage) {
+    public DefaultAppServerCache(ApiGatewayCacheProperties apiGatewayCacheProperties, AppServerStorage appServerStorage) {
         this.appServerStorage = appServerStorage;
-        this.apiGatewayServerProperties = apiGatewayServerProperties;
-        this.shouldUseReadOnlyServerCache = apiGatewayServerProperties.getShouldUseReadOnlyServerCache();
-        this.serverCacheUpdateIntervalMs = apiGatewayServerProperties.getServerCacheUpdateIntervalMs();
-
+        this.shouldUseReadOnlyServerCache = apiGatewayCacheProperties.getShouldUseReadOnlyServerCache();
+        this.serverCacheUpdateIntervalMs = apiGatewayCacheProperties.getServerCacheUpdateIntervalMs();
+        this.skip = apiGatewayCacheProperties.getSkip();
         this.readWriteCacheMap =
-                CacheBuilder.newBuilder().initialCapacity(apiGatewayServerProperties.getInitialCapacityOfServerCache())
-                        .expireAfterWrite(apiGatewayServerProperties.getServerCacheAutoExpirationInSeconds(), TimeUnit.SECONDS)
-                        .removalListener(new RemovalListener<String, Value>() {
-                            @Override
-                            public void onRemoval(RemovalNotification<String, Value> notification) {
-                                //此处不删除readOnlyCacheMap缓存当心跳时删除
-                                String removedKey = notification.getKey();
-                            }
+                CacheBuilder.newBuilder().initialCapacity(apiGatewayCacheProperties.getInitialCapacityOfServerCache())
+                        .expireAfterWrite(apiGatewayCacheProperties.getServerCacheAutoExpirationInSeconds(), TimeUnit.SECONDS)
+                        .removalListener((RemovalListener<String, Value>) notification -> {
+                            //此处不删除readOnlyCacheMap缓存当心跳时删除
+                            String removedKey = notification.getKey();
                         })
                         .build(new CacheLoader<String, Value>() {
                             @Override
@@ -103,6 +102,9 @@ public class DefaultAppServerCache implements AppServerCache {
     public AppServer get(String appId) {
         AppServer payload = null;
         Value value = null;
+        if (skip) {
+            return appServerStorage.generateAppServer(appId);
+        }
         try {
             if (shouldUseReadOnlyServerCache) {
                 final AppServer currentPayload = readOnlyCacheMap.get(appId);

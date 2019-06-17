@@ -3,6 +3,7 @@ package com.risen.base.api.gateway.config;
 import com.risen.base.api.gateway.cache.AppServerCache;
 import com.risen.base.api.gateway.cache.AppServerStorage;
 import com.risen.base.api.gateway.cache.DefaultAppServerCache;
+import com.risen.base.api.gateway.cache.DefaultAppServerStorage;
 import com.risen.base.api.gateway.filter.AppLoadBalancerClientFilter;
 import com.risen.base.api.gateway.filter.AppServerFilter;
 import com.risen.base.api.gateway.filter.AppkeySecretFilter;
@@ -32,20 +33,25 @@ import org.springframework.web.reactive.DispatcherHandler;
 @ConditionalOnProperty(name = "spring.cloud.gateway.enabled", matchIfMissing = true)
 @Configuration
 @ConditionalOnClass(DispatcherHandler.class)
-@EnableConfigurationProperties({ApiGatewayAppProperties.class, ApiGatewayServerProperties.class})
+@EnableConfigurationProperties({ApiGatewayCacheProperties.class})
 public class ApiGatewayAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public AppServerCache appServerCache(ApiGatewayServerProperties apiGatewayServerProperties, AppServerStorage appServerStorage) {
-        return new DefaultAppServerCache(apiGatewayServerProperties, appServerStorage);
+    public AppServerCache appServerCache(ApiGatewayCacheProperties apiGatewayCacheProperties, AppServerStorage appServerStorage) {
+        return new DefaultAppServerCache(apiGatewayCacheProperties, appServerStorage);
     }
 
+    @Bean
+    @ConditionalOnMissingBean
+    public AppServerStorage appServerStorage() {
+        return new DefaultAppServerStorage();
+    }
 
     @ConditionalOnProperty(name = "spring.cloud.gateway.app.skip", havingValue = "false", matchIfMissing = true)
     @Configuration
+    @EnableConfigurationProperties({ApiGatewayAppProperties.class})
     public static class ApiGatewayAppkeySecretAutoConfiguration {
-
         @Bean
         @ConditionalOnMissingBean
         public AppkeySecretFilter appkeySecretFilter(AccessAppSignCheck accessAppSignCheck) {
@@ -61,8 +67,8 @@ public class ApiGatewayAutoConfiguration {
 
     @ConditionalOnProperty(name = "spring.cloud.gateway.server.skip", havingValue = "false", matchIfMissing = true)
     @Configuration
+    @EnableConfigurationProperties({ApiGatewayServerProperties.class})
     public static class ApiGatewayServerAutoConfiguration {
-
         @Bean
         @ConditionalOnMissingBean
         public AppServerFilter appServerFilter(AppServerCheck appServerCheck) {
