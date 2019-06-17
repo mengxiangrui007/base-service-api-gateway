@@ -1,4 +1,4 @@
-# 装修平台API 网关基础中间件
+# API网关基础中间件
 
 基于[Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway)扩展实现
 
