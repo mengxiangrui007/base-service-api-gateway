@@ -28,7 +28,7 @@
         <java.version>1.8</java.version>
         <spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
         <mybatis.version>1.3.2</mybatis.version>
-        <mysql-jdbc.verion>5.1.47</mysql-jdbc.verion>
+        <mysql-jdbc.verion>8.0.28</mysql-jdbc.verion>
         <guava.version>23.0</guava.version>
         <okhttp.version>3.11.0</okhttp.version>
         <sentinel-core.version>1.6.0</sentinel-core.version>
